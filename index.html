@@ -18,16 +18,17 @@
 <body>
     <div>
         <div>
-            <!-- aqui esta el buscador -->
-            Buscar: <input type="bucador" id="bname" onkeyup="myFunction()">
+            <!-- aquí está el buscador -->
+            <form onsubmit="myFunction(); return false;">
+                Buscar: <input type="search" id="bname">
+                <button type="submit">Enviar</button>
+            </form>
             <p>El producto es: <span id="producto"></span></p>
-            </div>
+        </div>
     </div>
 </body>
 <footer>
-
 </footer>
-
 <script>
     const exp = /^[0-9]+$/;
     function validarNum(numero) {
@@ -37,15 +38,18 @@
             console.log("El número no es válido");
         }
     }
-
 </script>
-
--<script>
-    
+<script>
     function myFunction() {
-      var x = document.getElementById("bname").value;
-      document.getElementById("producto").innerHTML = x;
+        var x = document.getElementById("bname").value;
+        document.getElementById("producto").innerHTML = x;
     }
-    </script>
-
+    let lista_productos = {
+        champu: atributos , precio, cantidad,
+        jabon: atributos , precio, cantidad,
+        gelatina: atributos , precio, cantidad,
+        desodorante: atributos , precio, cantidad,
+        ambiatador: atributos , precio, cantidad,
+};
+</script>
 </html>

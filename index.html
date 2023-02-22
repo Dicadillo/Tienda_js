@@ -45,34 +45,6 @@
 
 </footer>
 <script>
-    const exp = /^[0-9]+$/;
-    function validarNum(numero) {
-        if (exp.test(numero)) {
-            console.log("El número es válido");
-        } else {
-            console.log("El número no es válido");
-        }
-    }
-    fetch(lista_productos)
-        .then(response => response.json())
-        .then(producto => {
-            if (producto.stock > 0) {
-                console.log('El producto está disponible');
-            } else {
-                fetch(lista_productos)
-                    .then(response => response.json())
-                    .then(productos => {
-                        let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
-                        console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
-                        proParecidos.map(p => console.log(p.nombre));
-                    });
-            }
-        });
-
-
-</script>
-
-<script>
     let lista_productos = {
         champu: {
             Descripcion: "Un champu",
@@ -103,13 +75,48 @@
 
     function buscarProducto() {
         var nombre_producto = document.getElementById("bname").value.toLowerCase();
-        var producto_encontrado = lista_productos[nombre_producto];
-        if (producto_encontrado) {
-            var mensaje = "El producto " + nombre_producto + " tiene un precio de " + producto_encontrado.precio + " y una cantidad de " + producto_encontrado.cantidad + ".";
+        var lista_claves = Object.keys(lista_productos);
+        for (var i = 0; i < lista_claves.length; i++) {
+            if (lista_claves[i].toLowerCase() === nombre_producto) {
+                var producto_encontrado = lista_productos[lista_claves[i]];
+                var mensaje = "El producto " + nombre_producto + " tiene un precio de " + producto_encontrado.Importe + " y una cantidad de " + producto_encontrado.Stock + ".";
+                document.getElementById("producto").innerHTML = mensaje;
+                return;
+            }
         }
+        document.getElementById("producto").innerHTML = "Producto no encontrado";
     }
 
 </script>
+<script>
+    const exp = /^[0-9]+$/;
+    function validarNum(numero) {
+        if (exp.test(numero)) {
+            console.log("El número es válido");
+        } else {
+            console.log("El número no es válido");
+        }
+    }
+    fetch(lista_productos)
+        .then(response => response.json())
+        .then(producto => {
+            if (producto.stock > 0) {
+                console.log('El producto está disponible');
+            } else {
+                fetch(lista_productos)
+                    .then(response => response.json())
+                    .then(productos => {
+                        let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
+                        console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
+                        proParecidos.map(p => console.log(p.nombre));
+                    });
+            }
+        });
+
+
+</script>
+
+
 
 
 </html>

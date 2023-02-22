@@ -40,16 +40,43 @@
     }
 </script>
 <script>
-    function myFunction() {
-        var x = document.getElementById("bname").value;
-        document.getElementById("producto").innerHTML = x;
-    }
     let lista_productos = {
-        champu: atributos , precio, cantidad,
-        jabon: atributos , precio, cantidad,
-        gelatina: atributos , precio, cantidad,
-        desodorante: atributos , precio, cantidad,
-        ambiatador: atributos , precio, cantidad,
-};
+        champu: {
+            Descripcion: "Un champu",
+            Importe: 10,
+            Stock: 20
+        },
+        jabon: {
+            Descripcion: "Un jabon",
+            Importe: 5,
+            Stock: 60
+        },
+        gelatina: {
+            Descripcion: "Un gelatina",
+            Importe: 2,
+            Stock: 100
+        },
+        desodorante: {
+            Descripcion: "Un desodorante",
+            Importe: 6,
+            Stock: 200
+        },
+        ambientador: {
+            Descripcion: "Un ambientador",
+            Importe: 23,
+            Stock: 250
+        }
+    };
+    
+    function buscarProducto() {
+        var nombre_producto = document.getElementById("bname").value.toLowerCase();
+        var producto_encontrado = lista_productos[nombre_producto];
+        if (producto_encontrado) {
+            var mensaje = "El producto " + nombre_producto + " tiene un precio de " + producto_encontrado.precio + " y una cantidad de " + producto_encontrado.cantidad + ".";
+        } else {
+            var mensaje = "El producto " + nombre_producto + " no se encontró en la lista.";
+        }
+        document.getElementById("producto").innerHTML = mensaje;
+    }
 </script>
 </html>

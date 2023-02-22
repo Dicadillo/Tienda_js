@@ -31,34 +31,6 @@
 
 </footer>
 <script>
-    const exp = /^[0-9]+$/;
-    function validarNum(numero) {
-        if (exp.test(numero)) {
-            console.log("El número es válido");
-        } else {
-            console.log("El número no es válido");
-        }
-    }
-    fetch(lista_productos)
-        .then(response => response.json())
-        .then(producto => {
-            if (producto.stock > 0) {
-                console.log('El producto está disponible');
-            } else {
-                fetch(lista_productos)
-                    .then(response => response.json())
-                    .then(productos => {
-                        let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
-                        console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
-                        proParecidos.map(p => console.log(p.nombre));
-                    });
-            }
-        });
-
-
-</script>
-
-<script>
     let lista_productos = {
         champu: {
             Descripcion: "Un champu",
@@ -102,6 +74,35 @@
     }
 
 </script>
+<script>
+    const exp = /^[0-9]+$/;
+    function validarNum(numero) {
+        if (exp.test(numero)) {
+            console.log("El número es válido");
+        } else {
+            console.log("El número no es válido");
+        }
+    }
+    fetch(lista_productos)
+        .then(response => response.json())
+        .then(producto => {
+            if (producto.stock > 0) {
+                console.log('El producto está disponible');
+            } else {
+                fetch(lista_productos)
+                    .then(response => response.json())
+                    .then(productos => {
+                        let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
+                        console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
+                        proParecidos.map(p => console.log(p.nombre));
+                    });
+            }
+        });
+
+
+</script>
+
+
 
 
 </html>

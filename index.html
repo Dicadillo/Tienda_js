@@ -8,7 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
     <style>
+        .contenedor {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
+        .contenido {
+            text-align: center;
+            color: white;
+        }
+
+        body {
+            background-color: black;
+        }
     </style>
 </head>
 <header>
@@ -17,13 +31,13 @@
 
 <body>
     <div>
-        <div>
+        <div class="contenido">
             <!-- aquí está el buscador -->
             <form onsubmit="myFunction(); return false;">
                 Buscar: <input type="search" id="bname">
                 <button type="submit">Enviar</button>
             </form>
-            <p>El producto es: <span id="producto"></span></p>
+            <p class="El_producto_es">El producto es: <span id="producto"></span></p>
         </div>
     </div>
 </body>

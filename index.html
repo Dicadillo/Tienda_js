@@ -14,17 +14,22 @@
 
 </header>
 <body>
-
+<div>
+    <div>
+        <!-- aqui esta el buscador -->
+        Buscar: <input type="bucador" id="bname" onkeyup="myFunction()">
+        <p>El producto es: <span id="producto"></span></p>
+        </div>
+</div>
 </body>
 <footer>
 
 </footer>
 <script>
-
-</script>
-
-<script>
-    
+function myFunction() {
+  var x = document.getElementById("bname").value;
+  document.getElementById("producto").innerHTML = x;
+}
 </script>
 
 </html>

@@ -18,17 +18,19 @@
 <body>
     <div>
         <div>
-            <!-- aquí está el buscador -->
-            <form onsubmit="myFunction(); return false;">
-                Buscar: <input type="search" id="bname">
-                <button type="submit">Enviar</button>
-            </form>
+           <!-- aquí está el buscador -->
+           <form onsubmit="myFunction(); return false;">
+            Buscar: <input type="search" id="bname">
+            <button type="submit">Enviar</button>
+        </form>
             <p>El producto es: <span id="producto"></span></p>
-        </div>
+            </div>
     </div>
 </body>
 <footer>
+
 </footer>
+
 <script>
     const exp = /^[0-9]+$/;
     function validarNum(numero) {
@@ -38,8 +40,26 @@
             console.log("El número no es válido");
         }
     }
+    fetch('https://ejemplo.com/api/productos/1234')
+  .then(response => response.json())
+  .then(producto => {
+    if (producto.stock > 0) {
+      console.log('El producto está disponible');
+    } else {
+      fetch('https://ejemplo.com/api/productos')
+        .then(response => response.json())
+        .then(productos => {
+          let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
+          console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
+         proParecidos.map(p => console.log(p.nombre));
+        });
+    }
+  });
+
+
 </script>
-<script>
+
+-<script>
     function myFunction() {
         var x = document.getElementById("bname").value;
         document.getElementById("producto").innerHTML = x;
@@ -52,4 +72,5 @@
         ambiatador: atributos , precio, cantidad,
 };
 </script>
+
 </html>

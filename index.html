@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta authors="Santiago Padilla and Aitor Pelaez">
@@ -13,23 +14,38 @@
 <header>
 
 </header>
+
 <body>
-<div>
     <div>
-        <!-- aqui esta el buscador -->
-        Buscar: <input type="bucador" id="bname" onkeyup="myFunction()">
-        <p>El producto es: <span id="producto"></span></p>
-        </div>
-</div>
+        <div>
+            <!-- aqui esta el buscador -->
+            Buscar: <input type="bucador" id="bname" onkeyup="myFunction()">
+            <p>El producto es: <span id="producto"></span></p>
+            </div>
+    </div>
 </body>
 <footer>
 
 </footer>
+
 <script>
-function myFunction() {
-  var x = document.getElementById("bname").value;
-  document.getElementById("producto").innerHTML = x;
-}
+    const exp = /^[0-9]+$/;
+    function validarNum(numero) {
+        if (exp.test(numero)) {
+            console.log("El número es válido");
+        } else {
+            console.log("El número no es válido");
+        }
+    }
+
 </script>
+
+-<script>
+    
+    function myFunction() {
+      var x = document.getElementById("bname").value;
+      document.getElementById("producto").innerHTML = x;
+    }
+    </script>
 
 </html>

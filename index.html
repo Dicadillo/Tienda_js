@@ -18,16 +18,17 @@
 <body>
     <div>
         <div>
-            <!-- aquí está el buscador -->
-            <form onsubmit="myFunction(); return false;">
-                Buscar: <input type="search" id="bname">
-                <button type="submit">Enviar</button>
-            </form>
+           <!-- aquí está el buscador -->
+           <form onsubmit="myFunction(); return false;">
+            Buscar: <input type="search" id="bname">
+            <button type="submit">Enviar</button>
+        </form>
             <p>El producto es: <span id="producto"></span></p>
-        </div>
+            </div>
     </div>
 </body>
 <footer>
+
 </footer>
 <script>
     const exp = /^[0-9]+$/;
@@ -38,45 +39,52 @@
             console.log("El número no es válido");
         }
     }
-</script>
-<script>
-    let lista_productos = {
-        champu: {
-            Descripcion: "Un champu",
-            Importe: 10,
-            Stock: 20
-        },
-        jabon: {
-            Descripcion: "Un jabon",
-            Importe: 5,
-            Stock: 60
-        },
-        gelatina: {
-            Descripcion: "Un gelatina",
-            Importe: 2,
-            Stock: 100
-        },
-        desodorante: {
-            Descripcion: "Un desodorante",
-            Importe: 6,
-            Stock: 200
-        },
-        ambientador: {
-            Descripcion: "Un ambientador",
-            Importe: 23,
-            Stock: 250
-        }
-    };
-    
-    function buscarProducto() {
-        var nombre_producto = document.getElementById("bname").value.toLowerCase();
-        var producto_encontrado = lista_productos[nombre_producto];
-        if (producto_encontrado) {
-            var mensaje = "El producto " + nombre_producto + " tiene un precio de " + producto_encontrado.precio + " y una cantidad de " + producto_encontrado.cantidad + ".";
-        } else {
-            var mensaje = "El producto " + nombre_producto + " no se encontró en la lista.";
-        }
-        document.getElementById("producto").innerHTML = mensaje;
+    fetch(lista_productos)
+  .then(response => response.json())
+  .then(producto => {
+    if (producto.stock > 0) {
+      console.log('El producto está disponible');
+    } else {
+      fetch(lista_productos)
+        .then(response => response.json())
+        .then(productos => {
+          let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
+          console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
+         proParecidos.map(p => console.log(p.nombre));
+        });
     }
+  });
+
+
 </script>
+
+<script>
+    const exp = /^[0-9]+$/;
+    function validarNum(numero) {
+        if (exp.test(numero)) {
+            console.log("El número es válido");
+        } else {
+            console.log("El número no es válido");
+        }
+    }
+    fetch(lista_productos)
+  .then(response => response.json())
+  .then(producto => {
+    if (producto.stock > 0) {
+      console.log('El producto está disponible');
+    } else {
+      fetch(lista_productos)
+        .then(response => response.json())
+        .then(productos => {
+          let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
+          console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
+         proParecidos.map(p => console.log(p.nombre));
+        });
+    }
+  });
+
+
+</script>
+
+
 </html>

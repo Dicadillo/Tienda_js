@@ -34,7 +34,8 @@
         <div class="contenido">
             <!-- aquí está el buscador -->
             <form onsubmit="buscarProducto(); return false;">
-                Buscar: <input type="search" id="bname">
+                Buscar: <input type="search" id="bname" list="sugerencias">
+                <datalist id="sugerencias"></datalist>
                 <button type="submit">Enviar</button>
             </form>
             <p class="El_producto_es">El producto es: <span id="producto"></span></p>
@@ -72,6 +73,29 @@
             Stock: 253
         }
     };
+    function sugerirProductos() {
+  const input = document.getElementById("bname");
+  const datalist = document.getElementById("sugerencias");
+
+  // Eliminar opciones anteriores
+  while (datalist.firstChild) {
+    datalist.removeChild(datalist.firstChild);
+  }
+
+  // Obtener sugerencias
+  const opciones = Object.keys(lista_productos).filter((producto) =>
+    producto.startsWith(input.value.toLowerCase())
+  );
+
+  // Agregar opciones al datalist
+  opciones.forEach((opcion) => {
+    const option = document.createElement("option");
+    option.value = opcion;
+    datalist.appendChild(option);
+  });
+}
+
+document.getElementById("bname").addEventListener("input", sugerirProductos);
 
     function buscarProducto() {
         var nombre_producto = document.getElementById("bname").value.toLowerCase();

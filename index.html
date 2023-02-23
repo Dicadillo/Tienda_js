@@ -42,7 +42,7 @@
     </div>
 </body>
 <footer>
-    
+
 </footer>
 <script>
     let lista_productos = {
@@ -97,15 +97,13 @@
             console.log("El número no es válido");
         }
     }
-    fetch()
+    fetch('productos.xml')
         .then(response => response.json())
-    fetch(lista_productos)
-        // .then(response => response.json())
         .then(producto => {
             if (producto.stock > 0) {
                 console.log('El producto está disponible');
             } else {
-                fetch(lista_productos)
+                fetch('productos.xml')
                     .then(response => response.json())
                     .then(productos => {
                         let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);

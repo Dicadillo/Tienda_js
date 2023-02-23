@@ -33,7 +33,7 @@
     <div>
         <div class="contenido">
             <!-- aquí está el buscador -->
-            <form onsubmit="myFunction(); return false;">
+            <form onsubmit="buscarProducto(); return false;">
                 Buscar: <input type="search" id="bname">
                 <button type="submit">Enviar</button>
             </form>
@@ -98,7 +98,7 @@
         }
     }
     fetch(lista_productos)
-        .then(response => response.json())
+        // .then(response => response.json())
         .then(producto => {
             if (producto.stock > 0) {
                 console.log('El producto está disponible');

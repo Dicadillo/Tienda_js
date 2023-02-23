@@ -33,7 +33,7 @@
     <div>
         <div class="contenido">
             <!-- aquí está el buscador -->
-            <form onsubmit="buscarProducto(); return false;">
+            <form onsubmit="buscarProducto(); return false">
                 Buscar: <input type="search" id="bname" list="sugerencias">
                 <datalist id="sugerencias"></datalist>
                 <button type="submit">Enviar</button>
@@ -113,6 +113,7 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
 
 </script>
 <script>
+    //Expresion regular
     const exp = /^[0-9]+$/;
     function validarNum(numero) {
         if (exp.test(numero)) {
@@ -121,12 +122,14 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
             console.log("El número no es válido");
         }
     }
+    //Fetch para ver si el producto esta disponible
     fetch('productos.xml')
         .then(response => response.json())
         .then(producto => {
             if (producto.stock > 0) {
                 console.log('El producto está disponible');
             } else {
+                //Si el producto no esta ...
                 fetch('productos.xml')
                     .then(response => response.json())
                     .then(productos => {
@@ -136,6 +139,7 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
                     });
             }
         });
+        //Calcula el precio en base a cuantos productos quiera
         function calcularPrecioTotal() {
  
   const precioUnitario = parseFloat(precioUnitarioInput.value);
@@ -144,6 +148,22 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
   
   const precioTotal = precioUnitario * cantidad;
   precioTotalInput.value = precioTotal.toFixed(2);
+}
+
+//Añadir Producto al Carrito
+function agregarProductoAlCarrito(productoId, cantidad) {
+  var carrito = obtenerCarrito();
+  var producto = obtenerProducto(productoId);
+  
+  // Agregar el producto al carrito
+  carrito.push({
+    id: generarId(),
+    producto_id: producto.id,
+    cantidad: cantidad
+  });
+  
+  // Guardar el carrito actualizado
+  guardarCarrito(carrito);
 }
 
 

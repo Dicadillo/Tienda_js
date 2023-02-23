@@ -136,6 +136,15 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
                     });
             }
         });
+        function calcularPrecioTotal() {
+ 
+  const precioUnitario = parseFloat(precioUnitarioInput.value);
+  const cantidad = parseInt(cantidadInput.value);
+
+  
+  const precioTotal = precioUnitario * cantidad;
+  precioTotalInput.value = precioTotal.toFixed(2);
+}
 
 
 </script>

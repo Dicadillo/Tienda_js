@@ -97,7 +97,7 @@
             console.log("El número no es válido");
         }
     }
-    fetch(lista_productos)
+    fetch()
         .then(response => response.json())
         .then(producto => {
             if (producto.stock > 0) {

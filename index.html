@@ -97,13 +97,10 @@
             console.log("El número no es válido");
         }
     }
-<<<<<<< HEAD
     fetch()
         .then(response => response.json())
-=======
     fetch(lista_productos)
         // .then(response => response.json())
->>>>>>> 691eb7abe4e0313b1fb03151ee5f8b0d50c3d7b3
         .then(producto => {
             if (producto.stock > 0) {
                 console.log('El producto está disponible');

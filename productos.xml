@@ -1,0 +1,27 @@
+<productos>
+    <producto id="Champu">
+        <descripcion>Un Champu</descripcion>
+        <importe>10</importe>
+        <stock>200</stock>
+    </producto>
+    <producto id="Jabon">
+        <descripcion>Un Jabon</descripcion>
+        <importe>5</importe>
+        <stock>60</stock>
+    </producto>
+    <producto id="Gelatina">
+        <descripcion>Una Gelatina</descripcion>
+        <importe>2</importe>
+        <stock>100</stock>
+    </producto>
+    <producto id="Desodorante">
+        <descripcion>Un Desodorante</descripcion>
+        <importe>6</importe>
+        <stock>200</stock>
+    </producto>
+    <producto id="Ambientador">
+        <descripcion>Un Ambientador</descripcion>
+        <importe>23</importe>
+        <stock>250</stock>
+    </producto>
+</productos>

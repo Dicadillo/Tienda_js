@@ -36,10 +36,20 @@
             <form onsubmit="buscarProducto(); return false">
                 Buscar: <input type="search" id="bname" list="sugerencias">
                 <datalist id="sugerencias"></datalist>
-                <button type="submit">Enviar</button>
+                <button type="submit" onclick="mostrarFormulario()">Enviar</button>
             </form>
             <p class="El_producto_es">El producto es: <span id="producto"></span></p>
         </div>
+    </div>
+    <div class="contenido">
+        <div id="formularioStock" style="display: none;">
+            <form onsubmit="validarNum()" onclick="">
+              Introduzca la cantidad de unidades de este producto: <br>
+              <input type="search" id="buscStock">
+              <button type="submit">Confirmar</button>
+            </form>
+            <p class="Cantidad_unidades"><span id="unid"></span></p>
+          </div>
     </div>
 </body>
 <footer>
@@ -95,6 +105,11 @@
   });
 }
 
+function mostrarFormulario() {
+  var formularioStock = document.querySelector("#formularioStock");
+  formularioStock.style.display = "block";
+}
+
 document.getElementById("bname").addEventListener("input", sugerirProductos);
 
     function buscarProducto() {
@@ -110,35 +125,18 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
         }
         document.getElementById("producto").innerHTML = "Producto no encontrado";
     }
-
-</script>
-<script>
     //Expresion regular
     const exp = /^[0-9]+$/;
     function validarNum(numero) {
         if (exp.test(numero)) {
-            console.log("El número es válido");
-        } else {
-            console.log("El número no es válido");
-        }
+            var mensaje = "Ya esta";
+                document.getElementById("unid").innerHTML = mensaje;
+                return
+        } 
+        document.getElementById("unid").innerHTML =  "El numero no es válido";
     }
-    //Fetch para ver si el producto esta disponible
-    fetch('productos.xml')
-        .then(response => response.json())
-        .then(producto => {
-            if (producto.stock > 0) {
-                console.log('El producto está disponible');
-            } else {
-                //Si el producto no esta ...
-                fetch('productos.xml')
-                    .then(response => response.json())
-                    .then(productos => {
-                        let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
-                        console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
-                        proParecidos.map(p => console.log(p.nombre));
-                    });
-            }
-        });
+</script>
+<script>
         //Calcula el precio en base a cuantos productos quiera
         function calcularPrecioTotal() {
  

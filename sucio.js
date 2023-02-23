@@ -53,3 +53,19 @@ function actualizarOpciones(productos) {
     }
   }
 }
+fetch('productos.xml')
+.then(response => response.json())
+.then(producto => {
+    if (producto.stock > 0) {
+        console.log('El producto está disponible');
+    } else {
+        //Si el producto no esta ...
+        fetch('productos.xml')
+            .then(response => response.json())
+            .then(productos => {
+                let proParecidos = productos.filter(p => p.codigo === producto.codigo && p.id !== producto.id);
+                console.log('No hay stock disponible para este producto. Aquí hay algunos productos similares:');
+                proParecidos.map(p => console.log(p.nombre));
+            });
+    }
+});

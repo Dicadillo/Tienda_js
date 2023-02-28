@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>envio</title>
+    <style>
+        body {
+            background-color: white;
+
+        }
+
+        h2 {
+            color: red
+        }
+
+        input {
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <form>
+            <h2>Inventario de los Productos</h2>
+            <input type="number" id="codigoInput" required>:Codigo Producto<br>
+            <input type="text" id="descripcionInput" required>:Descripcion<br>
+            <input type="number" id="importeInput" required>:Importe<br>
+            <input type="number" id="stockInput" required>:Stock<br>
+            <input type="button" id="altasButton" value=" Altas">
+            <input type="button" id="bajasButton" value=" Bajas">
+            <input type="button" value=" Modificaciones">
+            <input type="button" value=" Inventario">
+        </form>
+    </div>
+    <div id="resultados">
+
+
+    </div>
+
+    <script>
+        let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
+
+
+        document.getElementById("altasButton").addEventListener("click", function () {
+            let codigo = document.getElementById("codigoInput").value;
+            let descripcion = document.getElementById("descripcionInput").value;
+            let importe = document.getElementById("importeInput").value;
+            let stock = document.getElementById("stockInput").value;
+
+
+            let producto = {
+                codigo: codigo,
+                descripcion: descripcion,
+                importe: importe,
+                stock: stock
+            };
+            lista_productos.push(producto);
+
+            document.getElementById("resultados").innerHTML = "Se ha añadido correctamente";
+        });
+
+
+        document.getElementById("bajasButton").addEventListener("click", function () {
+            let codigo = document.getElementById("codigoInput").value;
+
+
+            let index = lista_productos.findIndex(function (producto) {
+                return producto.codigo === codigo;
+            });
+
+            if (index !== -1) {
+                lista_productos.splice(index, 1);
+
+                document.getElementById("resultados").innerHTML = "Se ha elimiando correctamente";
+            }
+        });
+        document.querySelector('input[value=" Modificaciones"]').addEventListener("click", function () {
+            let codigo = document.getElementById("codigoInput").value;
+
+            let index = lista_productos.findIndex(function (producto) {
+                return producto.codigo === codigo;
+            });
+
+            if (index !== -1) {
+                let descripcion = document.getElementById("descripcionInput").value;
+                let importe = document.getElementById("importeInput").value;
+                let stock = document.getElementById("stockInput").value;
+
+                lista_productos[index].descripcion = descripcion;
+                lista_productos[index].importe = importe;
+                lista_productos[index].stock = stock;
+
+                document.getElementById("resultados").innerHTML = "Producto modificado con éxito";
+            } else {
+                document.getElementById("resultados").innerHTML = "Producto no encontrado";
+            }
+        });
+
+        document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
+            let listaHTML = "<ul>";
+            for (let producto of lista_productos) {
+                listaHTML += "<li>" + producto.codigo + " - " + producto.descripcion + " - " + producto.importe + " - " + producto.stock + "</li>";
+            }
+            listaHTML += "</ul>";
+            document.getElementById("resultados").innerHTML = listaHTML;
+            const miArrayEnTexto = JSON.stringify(lista_productos);
+            localStorage.setItem('lista_productos', miArrayEnTexto);
+        });
+
+    </script>
+</body>
+
+</html>

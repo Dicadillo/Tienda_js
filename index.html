@@ -32,10 +32,10 @@
     <div>
         <form>
             <h2>Inventario de los Productos</h2>
-            <input type="text" id="codigoInput" required>:Codigo Producto<br>
+            <input type="number" id="codigoInput" required>:Codigo Producto<br>
             <input type="text" id="descripcionInput" required>:Descripcion<br>
-            <input type="text" id="importeInput" required>:Importe<br>
-            <input type="text" id="stockInput" required>:Stock<br>
+            <input type="number" id="importeInput" required>:Importe<br>
+            <input type="number" id="stockInput" required>:Stock<br>
             <input type="button" id="altasButton" value=" Altas">
             <input type="button" id="bajasButton" value=" Bajas">
             <input type="button" value=" Modificaciones">
@@ -66,7 +66,7 @@
             };
             lista_productos.push(producto);
 
-            document.getElementById("resultados").innerHTML =  "Se ha añadido correctamente";
+            document.getElementById("resultados").innerHTML = "Se ha añadido correctamente";
         });
 
 
@@ -81,7 +81,7 @@
             if (index !== -1) {
                 lista_productos.splice(index, 1);
 
-                document.getElementById("resultados").innerHTML =  "Se ha elimiando correctamente";
+                document.getElementById("resultados").innerHTML = "Se ha elimiando correctamente";
             }
         });
         document.querySelector('input[value=" Modificaciones"]').addEventListener("click", function () {
@@ -100,12 +100,20 @@
                 lista_productos[index].importe = importe;
                 lista_productos[index].stock = stock;
 
-                document.getElementById("resultados").innerHTML = "Cual desea modificar:" + lista_productos;
+                document.getElementById("resultados").innerHTML = "Producto modificado con éxito";
+            } else {
+                document.getElementById("resultados").innerHTML = "Producto no encontrado";
             }
         });
-        document.querySelector('input[value=" Inventario"]').addEventListener("click", function() {
-            document.getElementById("resultados").innerHTML =  lista_productos.values;
-});
+
+        document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
+            let listaHTML = "<ul>";
+            for (let producto of lista_productos) {
+                listaHTML += "<li>" + producto.codigo + " - " + producto.descripcion + " - " + producto.importe + " - " + producto.stock + "</li>";
+            }
+            listaHTML += "</ul>";
+            document.getElementById("resultados").innerHTML = listaHTML;
+        });
     </script>
 
 </body>

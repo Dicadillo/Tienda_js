@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta authors="Santiago Padilla and Aitor Pelaez">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <style>
+        .contenedor {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .contenido {
+            text-align: center;
+            color: white;
+        }
+
+        body {
+            background-color: black;
+        }
+    </style>
+</head>
+<header>
+
+</header>
+
+<body>
+    <div>
+        <div class="contenido">
+            <!-- aquí está el buscador -->
+            <form onsubmit="buscarProducto(); return false">
+                Buscar: <input type="search" id="bname" list="sugerencias">
+                <datalist id="sugerencias"></datalist>
+                <button type="submit" onclick="mostrarFormulario()">Enviar</button>
+            </form>
+            <p class="El_producto_es">El producto es: <span id="producto"></span></p>
+        </div>
+    </div>
+    <div class="contenido">
+        <div id="formularioStock" style="display: none;">
+            <form onsubmit="validarNum()" onclick="">
+              Introduzca la cantidad de unidades de este producto: <br>
+              <input type="search" id="buscStock">
+              <button type="submit">Confirmar</button>
+            </form>
+            <p class="Cantidad_unidades"><span id="unid"></span></p>
+          </div>
+    </div>
+</body>
+<footer>
+
+</footer>
+<script>
+    let lista_productos = {
+        champu: {
+            Descripcion: "Un champu",
+            Importe: 10,
+            Stock: 20
+        },
+        jabon: {
+            Descripcion: "Un jabon",
+            Importe: 5,
+            Stock: 60
+        },
+        gelatina: {
+            Descripcion: "Un gelatina",
+            Importe: 2,
+            Stock: 100
+        },
+        desodorante: {
+            Descripcion: "Un desodorante",
+            Importe: 6,
+            Stock: 200
+        },
+        ambientador: {
+            Descripcion: "Un ambientador",
+            Importe: 23,
+            Stock: 253
+        }
+    };
+    function sugerirProductos() {
+  const input = document.getElementById("bname");
+  const datalist = document.getElementById("sugerencias");
+
+  // Eliminar opciones anteriores
+  while (datalist.firstChild) {
+    datalist.removeChild(datalist.firstChild);
+  }
+
+  // Obtener sugerencias
+  const opciones = Object.keys(lista_productos).filter((producto) =>
+    producto.startsWith(input.value.toLowerCase())
+  );
+
+  // Agregar opciones al datalist
+  opciones.forEach((opcion) => {
+    const option = document.createElement("option");
+    option.value = opcion;
+    datalist.appendChild(option);
+  });
+}
+
+function mostrarFormulario() {
+  var formularioStock = document.querySelector("#formularioStock");
+  formularioStock.style.display = "block";
+}
+
+document.getElementById("bname").addEventListener("input", sugerirProductos);
+
+    function buscarProducto() {
+        var nombre_producto = document.getElementById("bname").value.toLowerCase();
+        var lista_claves = Object.keys(lista_productos);
+        for (var i = 0; i < lista_claves.length; i++) {
+            if (lista_claves[i].toLowerCase() === nombre_producto) {
+                var producto_encontrado = lista_productos[lista_claves[i]];
+                var mensaje = "El producto " + nombre_producto + " tiene un precio de " + producto_encontrado.Importe + " y una cantidad de " + producto_encontrado.Stock + ".";
+                document.getElementById("producto").innerHTML = mensaje;
+                return;
+            }
+        }
+        document.getElementById("producto").innerHTML = "Producto no encontrado";
+    }
+    //Expresion regular
+    const exp = /^[0-9]+$/;
+    function validarNum(numero) {
+        if (exp.test(numero)) {
+            var mensaje = "Ya esta";
+                document.getElementById("unid").innerHTML = mensaje;
+                return
+        } 
+        document.getElementById("unid").innerHTML =  "El numero no es válido";
+    }
+</script>
+<script>
+        //Calcula el precio en base a cuantos productos quiera
+        function calcularPrecioTotal() {
+ 
+  const precioUnitario = parseFloat(precioUnitarioInput.value);
+  const cantidad = parseInt(cantidadInput.value);
+
+  
+  const precioTotal = precioUnitario * cantidad;
+  precioTotalInput.value = precioTotal.toFixed(2);
+}
+
+//Añadir Producto al Carrito
+function agregarProductoAlCarrito(productoId, cantidad) {
+  var carrito = obtenerCarrito();
+  var producto = obtenerProducto(productoId);
+  
+  // Agregar el producto al carrito
+  carrito.push({
+    id: generarId(),
+    producto_id: producto.id,
+    cantidad: cantidad
+  });
+  
+  // Guardar el carrito actualizado
+  guardarCarrito(carrito);
+}
+
+
+</script>
+
+
+
+
+</html>

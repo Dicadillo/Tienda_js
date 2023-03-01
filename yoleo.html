@@ -63,6 +63,7 @@
             actualizarAlmacenamientoLocal();
             document.getElementById("resultados").innerHTML = "Se ha añadido correctamente";
         });
+        
         document.getElementById("bajasButton").addEventListener("click", function () {
             let codigo = document.getElementById("codigoInput").value;
 
@@ -77,6 +78,7 @@
                 document.getElementById("resultados").innerHTML = "Se ha elimiando correctamente";
             }
         });
+
         document.querySelector('input[value=" Modificaciones"]').addEventListener("click", function () {
             let codigo = document.getElementById("codigoInput").value;
 

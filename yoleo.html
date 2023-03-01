@@ -44,20 +44,15 @@
         </form>
     </div>
     <div id="resultados">
-
-
     </div>
 
     <script>
         let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
-
         document.getElementById("altasButton").addEventListener("click", function () {
             let codigo = document.getElementById("codigoInput").value;
             let descripcion = document.getElementById("descripcionInput").value;
             let importe = document.getElementById("importeInput").value;
             let stock = document.getElementById("stockInput").value;
-
-
             let producto = {
                 codigo: codigo,
                 descripcion: descripcion,
@@ -68,8 +63,6 @@
             actualizarAlmacenamientoLocal();
             document.getElementById("resultados").innerHTML = "Se ha añadido correctamente";
         });
-
-
         document.getElementById("bajasButton").addEventListener("click", function () {
             let codigo = document.getElementById("codigoInput").value;
 

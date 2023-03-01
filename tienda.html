@@ -41,8 +41,8 @@
                 <button type="submit" onclick="mostrarFormulario()">Enviar</button>
             </form>
             <p class="El_producto_es">El producto es: <span id="producto"></span></p>
+            <div id="resultados"></div>
         </div>
-        <div id="resultados"></div>
     </div>
     <div class="contenido">
         <div id="formularioStock" style="display: none;">
@@ -74,17 +74,17 @@
         // Eliminar opciones anteriores
         while (datalist.firstChild) {
             datalist.removeChild(datalist.firstChild);
-        }
+        }W
 
         // Obtener sugerencias
         const opciones = Object.keys(lista_productos).filter((producto) =>
-            producto.startsWith(input.value.toLowerCase())
+            producto.startsWith(input.value.toLowerCase()) || lista_productos[producto].descripcion.toLowerCase().startsWith(input.value.toLowerCase())
         );
 
         // Agregar opciones al datalist
         opciones.forEach((opcion) => {
             const option = document.createElement("option");
-            option.value = opcion;
+            option.value = opcion + ' - ' + lista_productos[opcion].descripcion;
             datalist.appendChild(option);
         });
     }
@@ -133,7 +133,7 @@
     }
 
     //Añadir Producto al Carrito
-    function agregarProductoAlCarrito(producto.codigo, cantidad) {
+    function agregarProductoAlCarrito(codigo, cantidad) {
         var carrito = obtenerCarrito();
         var producto = obtenerProducto(productoId);
 

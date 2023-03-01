@@ -125,6 +125,7 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
         }
         document.getElementById("producto").innerHTML = "Producto no encontrado";
     }
+
     //Expresion regular
     const exp = /^[0-9]+$/;
     function validarNum(numero) {
@@ -142,8 +143,6 @@ document.getElementById("bname").addEventListener("input", sugerirProductos);
  
   const precioUnitario = parseFloat(precioUnitarioInput.value);
   const cantidad = parseInt(cantidadInput.value);
-
-  
   const precioTotal = precioUnitario * cantidad;
   precioTotalInput.value = precioTotal.toFixed(2);
 }

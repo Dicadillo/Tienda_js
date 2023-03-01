@@ -40,8 +40,8 @@
             <input type="button" id="bajasButton" value=" Bajas">
             <input type="button" value=" Modificaciones">
             <input type="button" value=" Inventario">
-            <input type="button" value=" borrar">
-        </form
+            <input type="button" value="Borrar LocalStorage">
+        </form>
     </div>
     <div id="resultados">
 
@@ -49,7 +49,8 @@
     </div>
 
     <script>
-         let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
+        let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
+
         document.getElementById("altasButton").addEventListener("click", function () {
             let codigo = document.getElementById("codigoInput").value;
             let descripcion = document.getElementById("descripcionInput").value;
@@ -123,8 +124,9 @@
         function actualizarAlmacenamientoLocal() {
             localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
         }
-        document.querySelector('input[value=" Borrar"]').addEventListener("click", function () {
+        document.querySelector('input[value="Borrar LocalStorage"]').addEventListener("click", function () {
             localStorage.clear();
+            document.getElementById("resultados").innerHTML = "LocalStorage borrado correctamente";
         });
     </script>
 

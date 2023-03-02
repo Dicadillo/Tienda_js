@@ -148,11 +148,9 @@
 
     //Calcula el precio en base a cuantos productos quiera
     function calcularPrecioTotal() {
-
         const precioUnitario = parseFloat(precioUnitarioInput.value);
         const cantidad = parseInt(cantidadInput.value);
-        const precioTotal = precioUnitario * cantidad;
-        precioTotalInput.value = precioTotal.toFixed(2);
+        const precioTotal = reduce()
     }
 
     //Añadir Producto al Carrito
@@ -169,8 +167,8 @@
 
         // Guardar el carrito actualizado
         guardarCarrito(carrito);
+        carrito.reduce((a, v) => { return a + v.importe; }, 0);
     }
-
 
     // Función para obtener el carrito de la compra
     function obtenerCarrito() {
@@ -208,10 +206,6 @@
             lista_productos = JSON.parse(lista_productos_JSON);
         }
     });
-
-    function abrirFormulario() {
-        window.open("stock.html", "_blank");
-    }
 
     function actualizarAlmacenamientoLocal() {
         localStorage.setItem('lista_productos', JSON.stringify(lista_productos));

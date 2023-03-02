@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta authors="Santiago Padilla and Aitor Pelaez">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .contenedor {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .contenido {
+            text-align: center;
+            color: white;
+        }
+
+        body {
+            background-color: black;
+        }
+        footer{
+            align-content: center;
+            text-align: center;
+        }
+        footer a{
+            color: aqua;
+            text-align: center;
+        }
+    </style>
+</head>
+<header>
+
+</header>
+
+<body>
+    <div>
+        <div class="contenido">
+            <!-- aquí está el buscador -->
+            <form onsubmit="buscarProducto(); return false">
+                Buscar: <input type="search" id="bname" list="sugerencias">
+                <datalist id="sugerencias"></datalist>
+                <input type="button" value=" Inventario">
+                <button type="submit" onclick="mostrarFormulario()">Enviar</button>
+            </form>
+            <p class="El_producto_es">El producto es: <span id="producto"></span></p>
+            <div id="resultados"></div>
+        </div>
+    </div>
+    <div class="contenido">
+        <div id="formularioStock" style="display: none;">
+            <form onclick="comprobasrstock()">
+                Introduzca la cantidad de unidades de este producto: <br>
+                <input type="search" id="buscStock">
+                <button type="button">Confirmar</button>
+
+            </form>
+            <p class="Cantidad_unidades"><span id="unid"></span></p>
+        </div>
+    </div>
+</body>
+<footer>
+        <a href="https://iesclaradelrey.es/portal/index.php/es/">Portal clara del rey</a>
+</footer>
+
+<script>
+    let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
+    $(document).ready(function () {
+        actualizarAlmacenamientoLocal();
+    });
+    function actualizarAlmacenamientoLocal() {
+        localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
+    }
+    function sugerirProductos() {
+        const input = document.getElementById("bname");
+        const datalist = document.getElementById("sugerencias");
+        // Eliminar opciones anteriores
+        while (datalist.firstChild) {
+            datalist.removeChild(datalist.firstChild);
+        }
+        // Obtener sugerencias
+        const opciones = Object.keys(lista_productos).filter((producto) =>
+            producto.startsWith(input.value.toLowerCase()) || lista_productos[producto].descripcion.toLowerCase().startsWith(input.value.toLowerCase())
+        );
+        // Agregar opciones al datalist
+        opciones.forEach((opcion) => {
+            const option = document.createElement("option");
+            option.value = opcion + ' - ' + lista_productos[opcion].descripcion;
+            datalist.appendChild(option);
+        });
+    }
+
+    function mostrarFormulario() {
+        var formularioStock = document.querySelector("#formularioStock");
+        formularioStock.style.display = "block";
+    }
+
+    document.getElementById("bname").addEventListener("input", sugerirProductos);
+
+    function buscarProducto() {
+        var nombre_producto = document.getElementById("bname").value.toLowerCase();
+        for (var producto of lista_productos) {
+            if (producto.codigo.toLowerCase() === nombre_producto || producto.descripcion.toLowerCase() === nombre_producto) {
+                var mensaje = "El producto " + producto.codigo + " tiene un precio de " + producto.importe + " y una cantidad de " + producto.stock + ".";
+                document.getElementById("producto").innerHTML = mensaje;
+                return;
+            }
+        }
+        document.getElementById("producto").innerHTML = "Producto no encontrado";
+    }
+    //Expresion regular
+    function stockDisponible() {
+        const exp = /^[0-9]+$/;
+        var num_produtos = document.getElementById("buscStock");
+        var nombre_producto = document.getElementById("bname").value.toLowerCase();
+        for (var producto of lista_productos) {
+            if (producto.codigo.toLowerCase() === nombre_producto || producto.descripcion.toLowerCase() === nombre_producto) {
+
+            }
+        }
+    }
+    
+   
+
+    document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
+        actualizarAlmacenamientoLocal();
+        let listaHTML = "<ul>";
+        for (let producto of lista_productos) {
+            listaHTML += "<li>" + producto.codigo + " - " + producto.descripcion + " - " + producto.importe + " - " + producto.stock + "</li>";
+        }
+        listaHTML += "</ul>";
+        document.getElementById("resultados").innerHTML = listaHTML;
+
+        const lista_productos_JSON = localStorage.getItem('lista_productos');
+        if (lista_productos_JSON) {
+            lista_productos = JSON.parse(lista_productos_JSON);
+        }
+    });
+</script>
+
+</html>

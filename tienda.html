@@ -61,11 +61,14 @@
 
 </footer>
 <script>
-    document.onkeydown = function (e) {
-        if (e.ctrlKey && e.code === "Space") {
-            abrirFormulario();
-        }
-    }
+    document.addEventListener("keydown", (event) => {
+            // Verificamos si se presionó la tecla ctrl y la barra espaciadora
+            if (event.ctrlKey && event.code === "Space") {
+                window.open(
+                    'stock.html' 
+                );
+            }
+        });
 
     let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
     $(document).ready(function () {
@@ -212,14 +215,6 @@
 
     function actualizarAlmacenamientoLocal() {
         localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
-    }
-    function bloquearInformacion() {
-        // Deshabilitar la introducción de información en la página
-        document.body.contentEditable = false;
-    }
-    function desbloquearInformacion() {
-        // Habilitar la introducción de información en la página
-        document.body.contentEditable = true;
     }
 </script>
 

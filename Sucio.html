@@ -40,39 +40,31 @@
                 <input type="button" value=" Inventario">
                 <button type="submit" onclick="mostrarFormulario()">Enviar</button>
             </form>
+            <p class="El_producto_es">El producto es: <span id="producto"></span></p>
             <div id="resultados"></div>
         </div>
     </div>
     <div class="contenido">
         <div id="formularioStock" style="display: none;">
-            <form onsubmit="validarNum()" onclick="">
+            <form onclick="">
                 Introduzca la cantidad de unidades de este producto: <br>
                 <input type="search" id="buscStock">
-                <button type="submit">Confirmar</button>
+                <button type="submit" onclick="mostrarFormulario()">Confirmar</button>
+
             </form>
             <p class="Cantidad_unidades"><span id="unid"></span></p>
         </div>
     </div>
     <div class="contenido">
-        <div id="formulariocarro" style="display: none;">
-            <form onsubmit="mostrarCarro()" onclick="">
-                Su carro tiene: <br>
-                <span id="carro"></span>
-                <button type="submit" onsubmit="verificarStock()">Confirmar</button>
+        <div id="formularioStock" style="display: none;">
+            <form onclick="verificarStock()">
+                Introduzca la cantidad de unidades de este producto: <br>
+                <input type="search" id="buscStock">
+                <button type="button">Confirmar</button>
             </form>
-            <p class="Cantidad_unidades"><span id="unid"></span></p>
-        </div>
-    </div>
-    <div>
-        <ul id="lista-carrito">
-
-        </ul>
-        <p>Total: <span id="total"></span></p>
-        <button id="boton-pagar">Pagar</button>
-    </div>
 </body>
 <footer>
-
+    <a href="https://iesclaradelrey.es/portal/index.php/es/">Portal clara del rey</a>
 </footer>
 <script>
     let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
@@ -120,12 +112,17 @@
                 return;
             }
         }
+        document.getElementById("producto").innerHTML = "Producto no encontrado";
     }
-
+    function mostrarFormulario() {
+        var formularioStock = document.getElementById("formularioStock");
+        formularioStock.style.display = "block";
+    }
 
     //Expresion regular
     const exp = /^[0-9]+$/;
-    function validarNum() {
+    function validarNum(event) {
+        event.preventDefault();
         const input = document.getElementById("buscStock");
         const numero = input.value;
         if (exp.test(numero)) {
@@ -135,6 +132,7 @@
         }
         document.getElementById("unid").innerHTML = "El numero no es válido";
     }
+
 </script>
 <script>
     //Calcula el precio en base a cuantos productos quiera
@@ -147,23 +145,21 @@
     }
 
     //Añadir Producto al Carrito
-    const listaCarrito = document.getElementById("lista-carrito");
-    const total = document.getElementById("total");
+    function agregarProductoAlCarrito(codigo, cantidad) {
+        var carrito = obtenerCarrito();
+        var producto = obtenerProducto(productoId);
 
-    // Mostrar los productos del carrito en la lista
-    lista_productos.forEach((producto) => {
-        const li = document.createElement("li");
-        li.textContent = `${producto.nombre}: ${producto.precio}€`;
-        listaCarrito.appendChild(li);
-    });
+        // Agregar el producto al carrito
+        carrito.push({
+            id: generarId(),
+            producto_id: producto.id,
+            cantidad: cantidad
+        });
 
-    // Calcular el total del carrito usando la función reduce()
-    const totalCarrito = lista_productos.reduce((total, producto) => {
-        return total + producto.precio;
-    }, 0);
+        // Guardar el carrito actualizado
+        guardarCarrito(carrito);
+    }
 
-    // Mostrar el total en la página
-    total.textContent = `${totalCarrito}€`;
     document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
         actualizarAlmacenamientoLocal();
         let listaHTML = "<ul>";
@@ -181,29 +177,36 @@
     function actualizarAlmacenamientoLocal() {
         localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
     }
+    const productoBuscado = lista_productos.find(producto => producto.codigo === lista_productos.codigo);
+    function verificarStock() {
+        if (lista_productos) {
+            const sumaVenta = lista_productos.reduce((a, v) => { return a + v.importe; }, 0);
+            console.log(sumaVenta)
+            alert("El total de la compra es de " + sumaVenta + "€")
+            procesarPago()
+                .then(respuesta => {
+                    console.log(respuesta.mensaje);
+                    alert(respuesta.mensaje)
+                    let almacen = JSON.parse(localStorage.getItem('almacen'));
+                    almacen = almacen.map(producto => {
+                        const carritoProducto = carrito.find(item => item.codigo === producto.codigo);
+                        if (carritoProducto) {
+                            producto.stock -= carritoProducto.stock;
+                        }
+                        return producto;
+                    });
+                    localStorage.removeItem('carrito');
+                    localStorage.setItem('almacen', JSON.stringify(almacen)); //ACTUALIZAR STOCK
+                    const x = JSON.parse(localStorage.getItem('almacen'));
+                    console.log(x);
 
-    function verificarStock(codigoProducto) {
-        
-        const producto = lista_productos.find(producto => producto.codigo === codigoProducto);
+                    setTimeout(() => {
+                        window.location.href = 'pago.html'; //REDIRECCION A WEB
+                    }, 2000);
 
-        
-        if (producto && producto.stock > 0) {
-            console.log(`Hay ${producto.stock} unidades de ${producto.descripción} en stock.`);
-        } else {
-            console.log(`No hay suficiente stock de ${codigoProducto}.`);
-
-            
-            const primeraLetra = codigoProducto.charAt(0);
-
-            
-            const productosSimilares = products.filter(producto => producto.codigo.charAt(0) === primeraLetra);
-
-            
-            const nombresProductosSimilares = productosSimilares.map(producto => producto.descripción).join(", ");
-            console.log(`Productos similares: ${nombresProductosSimilares}.`);
+                })
         }
     }
-
 </script>
 
 </html>

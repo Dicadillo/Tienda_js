@@ -111,16 +111,18 @@
 
     //Expresion regular
     const exp = /^[0-9]+$/;
-    function validarNum() {
-        const input = document.getElementById("buscStock");
-        const numero = input.value;
-        if (exp.test(numero)) {
-            var mensaje = "Ya esta";
-            document.getElementById("unid").innerHTML = mensaje;
-            return;
-        }
-        document.getElementById("unid").innerHTML = "El numero no es válido";
+    function validarNum(event) {
+    event.preventDefault();
+    const input = document.getElementById("buscStock");
+    const numero = input.value;
+    if (exp.test(numero)) {
+        var mensaje = "Ya esta";
+        document.getElementById("unid").innerHTML = mensaje;
+        return;
     }
+    document.getElementById("unid").innerHTML = "El numero no es válido";
+}
+
 </script>
 <script>
     //Calcula el precio en base a cuantos productos quiera
@@ -147,6 +149,7 @@
         // Guardar el carrito actualizado
         guardarCarrito(carrito);
     }
+
     document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
         actualizarAlmacenamientoLocal();
         let listaHTML = "<ul>";

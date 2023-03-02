@@ -46,13 +46,14 @@
     </div>
     <div class="contenido">
         <div id="formularioStock" style="display: none;">
-            <form onclick="comprobasrstock()">
+            <form onsubmit="verificarStock()" onclick="">
                 Introduzca la cantidad de unidades de este producto: <br>
                 <input type="search" id="buscStock">
                 <button type="button">Confirmar</button>
 
             </form>
-            <p class="Cantidad_unidades"><span id="unid"></span></p>
+            <p class="Cantidad_unidades">Precio unitario: $<span id="precioUnitario"></span></p>
+            <p class="Cantidad_unidades">Precio de la línea: $<span id="precioLinea"></span></p>
         </div>
     </div>
 </body>
@@ -70,14 +71,17 @@
     function sugerirProductos() {
         const input = document.getElementById("bname");
         const datalist = document.getElementById("sugerencias");
+
         // Eliminar opciones anteriores
         while (datalist.firstChild) {
             datalist.removeChild(datalist.firstChild);
         }
+
         // Obtener sugerencias
         const opciones = Object.keys(lista_productos).filter((producto) =>
             producto.startsWith(input.value.toLowerCase()) || lista_productos[producto].descripcion.toLowerCase().startsWith(input.value.toLowerCase())
         );
+
         // Agregar opciones al datalist
         opciones.forEach((opcion) => {
             const option = document.createElement("option");
@@ -104,53 +108,35 @@
         }
         document.getElementById("producto").innerHTML = "Producto no encontrado";
     }
-    //Expresion regular
-    const exp = /^[0-9]+$/;
-    function comprobarstock() {
-        const input = document.getElementById("buscStock");
-        const numero = input.value;
-        const productoId = document.getElementById("producto").getAttribute("data-producto-id");
-        const producto = obtenerProducto(productoId);
-        const stockDisponible = producto.stock;
-        const codigoProducto = producto.codigo[0]; // Suponiendo que el código de producto es un string y queremos obtener su primera letra
 
-        if (exp.test(numero)) {
-            const cantidad = parseInt(numero);
-            if (cantidad <= stockDisponible) {
-                agregarProductoAlCarrito(productoId, cantidad);
-                input.value = "";
-                document.getElementById("unid").innerHTML = "Producto agregado al carrito";
-            } else {
-                const productosSimilares = obtenerProductos().filter(p => p.codigo[0] === codigoProducto && p.id !== productoId);
-                mostrarProductosSimilares(productosSimilares); // función que muestre los productos similares en algún lugar de la página
-                document.getElementById("unid").innerHTML = "No hay suficiente stock disponible";
-            }
+
+    function verificarStock() {
+        const codigoProducto = document.getElementById("bname").value.toLowerCase();
+        const cantidad = document.getElementById("buscStock").value;
+
+        // Validar que la cantidad sea un número entero positivo
+        if (!/^[1-9]\d*$/.test(cantidad)) {
+            alert("La cantidad debe ser un número entero positivo");
             return;
         }
-        document.getElementById("unid").innerHTML = "El número no es válido";
-    }
-    function mostrarProductosSimilares(codigoProducto) {
-        const productos = obtenerTodosLosProductos();
-        const productosSimilares = productos.filter(producto => producto.codigo.startsWith(codigoProducto));
-        const productosSimilaresHTML = productosSimilares.map(producto =>
-            `<li> ${producto.nombre}
-      <button onclick="agregarProductoAlCarrito('${producto.id}', 1)">Agregar al carrito</button>
-        </li>`).join("");
-        document.getElementById("productosSimilares").innerHTML = `
-        <h3>Productos similares:</h3>
-        <ul>
-      ${productosSimilaresHTML}
-        </ul>`
-            ;
-    }
-    function obtenerProducto(codigo) {
-        for (let i = 0; i < lista_productos.length; i++) {
-            if (lista_productos[i].codigo === codigo) {
-                return lista_productos[i];
-            }
+        // Buscar el producto seleccionado
+        const producto = lista_productos.find(p => p.codigo.toLowerCase() === codigoProducto || p.descripcion.toLowerCase() === codigoProducto);
+        // Verificar si hay suficiente stock
+        if (producto && producto.stock >= cantidad) {
+            // Mostrar precio unitario
+            const precioUnitario = producto.importe;
+            document.getElementById("precioUnitario").textContent = precioUnitario.toFixed(2);
+
+            // Calcular precio de línea y mostrarlo
+            const precioLinea = precioUnitario * cantidad;
+            document.getElementById("precioLinea").textContent = precioLinea.toFixed(2);
+        } else {
+            // Mostrar productos similares
+            const primeraLetra = codigoProducto.charAt(0);
+            const productosSimilares = lista_productos.filter(p => p.codigo.charAt(0) === primeraLetra);
+            const nombresProductosSimilares = productosSimilares.map(p => p.descripcion).join(", ");
+            alert(`No hay suficiente stock de ${codigoProducto}. Productos similares: ${nombresProductosSimilares}.`);
         }
-        // Si no se encuentra el producto con el ID proporcionado, se devuelve null
-        return null;
     }
 
     //Calcula el precio en base a cuantos productos quiera
@@ -192,6 +178,9 @@
             lista_productos = JSON.parse(lista_productos_JSON);
         }
     });
+    function actualizarAlmacenamientoLocal() {
+        localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
+    }
 </script>
 
 </html>

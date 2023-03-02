@@ -24,14 +24,6 @@
         body {
             background-color: black;
         }
-        footer{
-            align-content: center;
-            text-align: center;
-        }
-        footer a{
-            color: aqua;
-            text-align: center;
-        }
     </style>
 </head>
 <header>
@@ -54,21 +46,27 @@
     </div>
     <div class="contenido">
         <div id="formularioStock" style="display: none;">
-            <form onclick="comprobasrstock()">
+            <form onsubmit="verificarStock()" onclick="">
                 Introduzca la cantidad de unidades de este producto: <br>
                 <input type="search" id="buscStock">
                 <button type="button">Confirmar</button>
-
+                <button onclick="realizarPago()">Pagar</button>
             </form>
-            <p class="Cantidad_unidades"><span id="unid"></span></p>
+            <p class="Cantidad_unidades">Precio unitario: $<span id="precioUnitario"></span></p>
+            <p class="Cantidad_unidades">Precio de la línea: $<span id="precioLinea"></span></p>
         </div>
     </div>
 </body>
 <footer>
-        <a href="https://iesclaradelrey.es/portal/index.php/es/">Portal clara del rey</a>
-</footer>
 
+</footer>
 <script>
+    document.onkeydown = function (e) {
+        if (e.ctrlKey && e.code === "Space") {
+            abrirFormulario();
+        }
+    }
+
     let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
     $(document).ready(function () {
         actualizarAlmacenamientoLocal();
@@ -79,14 +77,17 @@
     function sugerirProductos() {
         const input = document.getElementById("bname");
         const datalist = document.getElementById("sugerencias");
+
         // Eliminar opciones anteriores
         while (datalist.firstChild) {
             datalist.removeChild(datalist.firstChild);
         }
+
         // Obtener sugerencias
         const opciones = Object.keys(lista_productos).filter((producto) =>
             producto.startsWith(input.value.toLowerCase()) || lista_productos[producto].descripcion.toLowerCase().startsWith(input.value.toLowerCase())
         );
+
         // Agregar opciones al datalist
         opciones.forEach((opcion) => {
             const option = document.createElement("option");
@@ -94,12 +95,10 @@
             datalist.appendChild(option);
         });
     }
-
     function mostrarFormulario() {
         var formularioStock = document.querySelector("#formularioStock");
         formularioStock.style.display = "block";
     }
-
     document.getElementById("bname").addEventListener("input", sugerirProductos);
 
     function buscarProducto() {
@@ -113,19 +112,84 @@
         }
         document.getElementById("producto").innerHTML = "Producto no encontrado";
     }
-    //Expresion regular
-    function stockDisponible() {
-        const exp = /^[0-9]+$/;
-        var num_produtos = document.getElementById("buscStock");
-        var nombre_producto = document.getElementById("bname").value.toLowerCase();
-        for (var producto of lista_productos) {
-            if (producto.codigo.toLowerCase() === nombre_producto || producto.descripcion.toLowerCase() === nombre_producto) {
 
-            }
+
+    function verificarStock() {
+        const codigoProducto = document.getElementById("bname").value.toLowerCase();
+        const cantidad = document.getElementById("buscStock").value;
+
+        // Validar que la cantidad sea un número entero positivo
+        if (!/^[1-9]\d*$/.test(cantidad)) {
+            alert("La cantidad debe ser un número entero positivo");
+            return;
+        }
+        // Buscar el producto seleccionado
+        const producto = lista_productos.find(p => p.codigo.toLowerCase() === codigoProducto || p.descripcion.toLowerCase() === codigoProducto);
+        // Verificar si hay suficiente stock
+        if (producto && producto.stock >= cantidad) {
+            // Mostrar precio unitario
+            const precioUnitario = producto.importe;
+            document.getElementById("precioUnitario").textContent = precioUnitario.toFixed(2);
+
+            // Calcular precio de línea y mostrarlo
+            const precioLinea = precioUnitario * cantidad;
+            document.getElementById("precioLinea").textContent = precioLinea.toFixed(2);
+        } else {
+            // Mostrar productos similares
+            const primeraLetra = codigoProducto.charAt(0);
+            const productosSimilares = lista_productos.filter(p => p.codigo.charAt(0) === primeraLetra);
+            const nombresProductosSimilares = productosSimilares.map(p => p.descripcion).join(", ");
+            alert(`No hay suficiente stock de ${codigoProducto}. Productos similares: ${nombresProductosSimilares}.`);
         }
     }
-    
-   
+
+    //Calcula el precio en base a cuantos productos quiera
+    function calcularPrecioTotal() {
+
+        const precioUnitario = parseFloat(precioUnitarioInput.value);
+        const cantidad = parseInt(cantidadInput.value);
+        const precioTotal = precioUnitario * cantidad;
+        precioTotalInput.value = precioTotal.toFixed(2);
+    }
+
+    //Añadir Producto al Carrito
+    function agregarProductoAlCarrito(codigo, cantidad) {
+        var carrito = obtenerCarrito();
+        var producto = buscarProducto(codigo);
+
+        // Agregar el producto al carrito
+        carrito.push({
+            id: generarId(),
+            producto_id: producto.id,
+            cantidad: cantidad
+        });
+
+        // Guardar el carrito actualizado
+        guardarCarrito(carrito);
+    }
+
+
+    // Función para obtener el carrito de la compra
+    function obtenerCarrito() {
+        let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+        return carrito;
+    }
+
+    // Función para obtener un producto del inventario
+    function obtenerProducto(id) {
+        let producto = lista_productos.find(p => p.id === id);
+        return producto;
+    }
+
+    // Función para generar un ID único para un producto en el carrito
+    function generarId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+
+    // Función para guardar el carrito de la compra
+    function guardarCarrito(carrito) {
+        localStorage.setItem("carrito", JSON.stringify(carrito));
+    }
 
     document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
         actualizarAlmacenamientoLocal();
@@ -141,6 +205,22 @@
             lista_productos = JSON.parse(lista_productos_JSON);
         }
     });
+
+    function abrirFormulario() {
+        window.open("stock.html", "_blank");
+    }
+
+    function actualizarAlmacenamientoLocal() {
+        localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
+    }
+    function bloquearInformacion() {
+        // Deshabilitar la introducción de información en la página
+        document.body.contentEditable = false;
+    }
+    function desbloquearInformacion() {
+        // Habilitar la introducción de información en la página
+        document.body.contentEditable = true;
+    }
 </script>
 
 </html>

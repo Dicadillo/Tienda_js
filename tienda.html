@@ -24,16 +24,20 @@
         body {
             background-color: black;
         }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
     </style>
 </head>
-<header>
-
-</header>
 
 <body>
     <div>
         <div class="contenido">
-            <!-- aquí está el buscador -->
             <form onsubmit="buscarProducto(); return false">
                 Buscar: <input type="search" id="bname" list="sugerencias">
                 <datalist id="sugerencias"></datalist>
@@ -49,27 +53,21 @@
             <form onsubmit="verificarStock()" onclick="">
                 Introduzca la cantidad de unidades de este producto: <br>
                 <input type="search" id="buscStock">
-                <button type="button">Confirmar</button>
-                <button onclick="realizarPago()">Pagar</button>
+                <button type="button" onclick="añad">Confirmar</button>
+                <button type="button" onclick="realizarPago()">Añadir</button>
             </form>
             <p class="Cantidad_unidades">Precio unitario: $<span id="precioUnitario"></span></p>
             <p class="Cantidad_unidades">Precio de la línea: $<span id="precioLinea"></span></p>
         </div>
+        <form>
+            <input type="button" value="pagar">
+        </form>
     </div>
 </body>
 <footer>
-
+    <a href="https://iesclaradelrey.es/portal/index.php/es/">Portal clara del rey</a>
 </footer>
 <script>
-    document.addEventListener("keydown", (event) => {
-            // Verificamos si se presionó la tecla ctrl y la barra espaciadora
-            if (event.ctrlKey && event.code === "Space") {
-                window.open(
-                    'stock.html' 
-                );
-            }
-        });
-
     let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
     $(document).ready(function () {
         actualizarAlmacenamientoLocal();
@@ -82,10 +80,11 @@
         const datalist = document.getElementById("sugerencias");
 
         // Eliminar opciones anteriores
-        while (datalist.firstChild) {
-            datalist.removeChild(datalist.firstChild);
-        }
-
+        //Añadimos un event listener al input de busqueda por codigo o descripcion que llama a la funcion buscarProductos        
+        let busquedaInput = document.getElementById('sugerencias');
+        busquedaInput.addEventListener('keyup', function () {
+            buscarProductos(this.value);
+        });
         // Obtener sugerencias
         const opciones = Object.keys(lista_productos).filter((producto) =>
             producto.startsWith(input.value.toLowerCase()) || lista_productos[producto].descripcion.toLowerCase().startsWith(input.value.toLowerCase())
@@ -98,24 +97,29 @@
             datalist.appendChild(option);
         });
     }
+
     function mostrarFormulario() {
         var formularioStock = document.querySelector("#formularioStock");
         formularioStock.style.display = "block";
     }
-    document.getElementById("bname").addEventListener("input", sugerirProductos);
+    let pred = document.getElementById("bname").addEventListener("input", sugerirProductos);
+
+    function MostrarProducto() {
+        var producto = buscarProducto();
+        var mensaje = "El producto " + producto.codigo + " tiene un precio de " + producto.importe + " y una cantidad de " + producto.stock + ".";
+                document.getElementById("producto").innerHTML = mensaje;
+                return;
+    }
 
     function buscarProducto() {
         var nombre_producto = document.getElementById("bname").value.toLowerCase();
         for (var producto of lista_productos) {
             if (producto.codigo.toLowerCase() === nombre_producto || producto.descripcion.toLowerCase() === nombre_producto) {
-                var mensaje = "El producto " + producto.codigo + " tiene un precio de " + producto.importe + " y una cantidad de " + producto.stock + ".";
-                document.getElementById("producto").innerHTML = mensaje;
-                return;
+                return producto;
             }
         }
-        document.getElementById("producto").innerHTML = "Producto no encontrado";
+        return null; // Retorna null si no se encuentra el producto
     }
-
 
     function verificarStock() {
         const codigoProducto = document.getElementById("bname").value.toLowerCase();
@@ -126,9 +130,11 @@
             alert("La cantidad debe ser un número entero positivo");
             return;
         }
+
         // Buscar el producto seleccionado
-        const producto = lista_productos.find(p => p.codigo.toLowerCase() === codigoProducto || p.descripcion.toLowerCase() === codigoProducto);
-        // Verificar si hay suficiente stock
+        const producto = buscarProducto();
+
+        // Verificar si se encontró el producto y hay suficiente stock
         if (producto && producto.stock >= cantidad) {
             // Mostrar precio unitario
             const precioUnitario = producto.importe;
@@ -137,6 +143,9 @@
             // Calcular precio de línea y mostrarlo
             const precioLinea = precioUnitario * cantidad;
             document.getElementById("precioLinea").textContent = precioLinea.toFixed(2);
+
+            // Habilitar el botón de "Añadir"
+            document.getElementById("añadirBoton").disabled = false;
         } else {
             // Mostrar productos similares
             const primeraLetra = codigoProducto.charAt(0);
@@ -147,50 +156,7 @@
     }
 
     //Calcula el precio en base a cuantos productos quiera
-    function calcularPrecioTotal() {
-        const precioUnitario = parseFloat(precioUnitarioInput.value);
-        const cantidad = parseInt(cantidadInput.value);
-        const precioTotal = reduce()
-    }
 
-    //Añadir Producto al Carrito
-    function agregarProductoAlCarrito(codigo, cantidad) {
-        var carrito = obtenerCarrito();
-        var producto = buscarProducto(codigo);
-
-        // Agregar el producto al carrito
-        carrito.push({
-            id: generarId(),
-            producto_id: producto.id,
-            cantidad: cantidad
-        });
-
-        // Guardar el carrito actualizado
-        guardarCarrito(carrito);
-        carrito.reduce((a, v) => { return a + v.importe; }, 0);
-    }
-
-    // Función para obtener el carrito de la compra
-    function obtenerCarrito() {
-        let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-        return carrito;
-    }
-
-    // Función para obtener un producto del inventario
-    function obtenerProducto(id) {
-        let producto = lista_productos.find(p => p.id === id);
-        return producto;
-    }
-
-    // Función para generar un ID único para un producto en el carrito
-    function generarId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
-
-    // Función para guardar el carrito de la compra
-    function guardarCarrito(carrito) {
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-    }
 
     document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
         actualizarAlmacenamientoLocal();
@@ -206,10 +172,6 @@
             lista_productos = JSON.parse(lista_productos_JSON);
         }
     });
-
-    function actualizarAlmacenamientoLocal() {
-        localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
-    }
 </script>
 
 </html>

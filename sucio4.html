@@ -24,16 +24,20 @@
         body {
             background-color: black;
         }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
     </style>
 </head>
-<header>
-
-</header>
 
 <body>
     <div>
         <div class="contenido">
-            <!-- aquí está el buscador -->
             <form onsubmit="buscarProducto(); return false">
                 Buscar: <input type="search" id="bname" list="sugerencias">
                 <datalist id="sugerencias"></datalist>
@@ -41,6 +45,7 @@
                 <button type="submit" onclick="mostrarFormulario()">Enviar</button>
             </form>
             <p class="El_producto_es">El producto es: <span id="producto"></span></p>
+
             <div id="resultados"></div>
         </div>
     </div>
@@ -49,24 +54,21 @@
             <form onsubmit="verificarStock()" onclick="">
                 Introduzca la cantidad de unidades de este producto: <br>
                 <input type="search" id="buscStock">
-                <button type="button">Confirmar</button>
-                <button onclick="realizarPago()">Pagar</button>
+                <button type="button" onclick="añad">Confirmar</button>
+                <button type="button" onclick="realizarPago()">Añadir</button>
             </form>
             <p class="Cantidad_unidades">Precio unitario: $<span id="precioUnitario"></span></p>
             <p class="Cantidad_unidades">Precio de la línea: $<span id="precioLinea"></span></p>
         </div>
+        <form>
+            <input type="button" value="pagar">
+        </form>
     </div>
 </body>
 <footer>
-
+    <a href="https://iesclaradelrey.es/portal/index.php/es/">Portal clara del rey</a>
 </footer>
 <script>
-    document.onkeydown = function (e) {
-        if (e.ctrlKey && e.code === "Space") {
-            abrirFormulario();
-        }
-    }
-
     let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
     $(document).ready(function () {
         actualizarAlmacenamientoLocal();
@@ -79,10 +81,11 @@
         const datalist = document.getElementById("sugerencias");
 
         // Eliminar opciones anteriores
-        while (datalist.firstChild) {
-            datalist.removeChild(datalist.firstChild);
-        }
-
+        //Añadimos un event listener al input de busqueda por codigo o descripcion que llama a la funcion buscarProductos        
+        let busquedaInput = document.getElementById('sugerencias');
+        busquedaInput.addEventListener('keyup', function () {
+            buscarProductos(this.value);
+        });
         // Obtener sugerencias
         const opciones = Object.keys(lista_productos).filter((producto) =>
             producto.startsWith(input.value.toLowerCase()) || lista_productos[producto].descripcion.toLowerCase().startsWith(input.value.toLowerCase())
@@ -95,101 +98,41 @@
             datalist.appendChild(option);
         });
     }
+
     function mostrarFormulario() {
         var formularioStock = document.querySelector("#formularioStock");
         formularioStock.style.display = "block";
     }
-    document.getElementById("bname").addEventListener("input", sugerirProductos);
+    let pred = document.getElementById("bname").addEventListener("input", sugerirProductos);
 
     function buscarProducto() {
         var nombre_producto = document.getElementById("bname").value.toLowerCase();
         for (var producto of lista_productos) {
             if (producto.codigo.toLowerCase() === nombre_producto || producto.descripcion.toLowerCase() === nombre_producto) {
-                var mensaje = "El producto " + producto.codigo + " tiene un precio de " + producto.importe + " y una cantidad de " + producto.stock + ".";
-                document.getElementById("producto").innerHTML = mensaje;
-                return;
+                return producto;
             }
         }
-        document.getElementById("producto").innerHTML = "Producto no encontrado";
+        return null; // Retorna null si no se encuentra el producto
     }
-
 
     function verificarStock() {
-        const codigoProducto = document.getElementById("bname").value.toLowerCase();
-        const cantidad = document.getElementById("buscStock").value;
+    let codigo = document.getElementById("codigo").value;
+    let productoEncontrado = buscarProducto(codigo);
 
-        // Validar que la cantidad sea un número entero positivo
-        if (!/^[1-9]\d*$/.test(cantidad)) {
-            alert("La cantidad debe ser un número entero positivo");
-            return;
-        }
-        // Buscar el producto seleccionado
-        const producto = lista_productos.find(p => p.codigo.toLowerCase() === codigoProducto || p.descripcion.toLowerCase() === codigoProducto);
-        // Verificar si hay suficiente stock
-        if (producto && producto.stock >= cantidad) {
-            // Mostrar precio unitario
-            const precioUnitario = producto.importe;
-            document.getElementById("precioUnitario").textContent = precioUnitario.toFixed(2);
+    if (productoEncontrado) {
+        let descripcion = productoEncontrado.descripcion;
+        let stock = productoEncontrado.stock;
+        let importe = productoEncontrado.importe;
 
-            // Calcular precio de línea y mostrarlo
-            const precioLinea = precioUnitario * cantidad;
-            document.getElementById("precioLinea").textContent = precioLinea.toFixed(2);
-        } else {
-            // Mostrar productos similares
-            const primeraLetra = codigoProducto.charAt(0);
-            const productosSimilares = lista_productos.filter(p => p.codigo.charAt(0) === primeraLetra);
-            const nombresProductosSimilares = productosSimilares.map(p => p.descripcion).join(", ");
-            alert(`No hay suficiente stock de ${codigoProducto}. Productos similares: ${nombresProductosSimilares}.`);
-        }
+        document.getElementById("producto").innerHTML = descripcion + ", Stock: " + stock + ", Importe: $" + importe;
+    } else {
+        alert("Producto no encontrado");
     }
+}
+
 
     //Calcula el precio en base a cuantos productos quiera
-    function calcularPrecioTotal() {
 
-        const precioUnitario = parseFloat(precioUnitarioInput.value);
-        const cantidad = parseInt(cantidadInput.value);
-        const precioTotal = precioUnitario * cantidad;
-        precioTotalInput.value = precioTotal.toFixed(2);
-    }
-
-    //Añadir Producto al Carrito
-    function agregarProductoAlCarrito(codigo, cantidad) {
-        var carrito = obtenerCarrito();
-        var producto = buscarProducto(codigo);
-
-        // Agregar el producto al carrito
-        carrito.push({
-            id: generarId(),
-            producto_id: producto.id,
-            cantidad: cantidad
-        });
-
-        // Guardar el carrito actualizado
-        guardarCarrito(carrito);
-    }
-
-
-    // Función para obtener el carrito de la compra
-    function obtenerCarrito() {
-        let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-        return carrito;
-    }
-
-    // Función para obtener un producto del inventario
-    function obtenerProducto(id) {
-        let producto = lista_productos.find(p => p.id === id);
-        return producto;
-    }
-
-    // Función para generar un ID único para un producto en el carrito
-    function generarId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
-
-    // Función para guardar el carrito de la compra
-    function guardarCarrito(carrito) {
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-    }
 
     document.querySelector('input[value=" Inventario"]').addEventListener("click", function () {
         actualizarAlmacenamientoLocal();
@@ -205,22 +148,6 @@
             lista_productos = JSON.parse(lista_productos_JSON);
         }
     });
-
-    function abrirFormulario() {
-        window.open("stock.html", "_blank");
-    }
-
-    function actualizarAlmacenamientoLocal() {
-        localStorage.setItem('lista_productos', JSON.stringify(lista_productos));
-    }
-    function bloquearInformacion() {
-        // Deshabilitar la introducción de información en la página
-        document.body.contentEditable = false;
-    }
-    function desbloquearInformacion() {
-        // Habilitar la introducción de información en la página
-        document.body.contentEditable = true;
-    }
 </script>
 
 </html>

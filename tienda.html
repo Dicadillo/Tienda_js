@@ -38,7 +38,7 @@
 <body>
     <div>
         <div class="contenido">
-            <form onsubmit="buscarProducto(); return false">
+            <form onsubmit="MostrarProducto(); return false">
                 Buscar: <input type="search" id="bname" list="sugerencias">
                 <datalist id="sugerencias"></datalist>
                 <input type="button" value=" Inventario">
@@ -50,23 +50,24 @@
     </div>
     <div class="contenido">
         <div id="formularioStock" style="display: none;">
-            <form onsubmit="verificarStock()" onclick="">
+            <form onsubmit="verificarStock()" >
                 Introduzca la cantidad de unidades de este producto: <br>
-                <input type="search" id="buscStock">
-                <button type="button" onclick="añad">Confirmar</button>
+                <input type="search" id="cantidad">
+                <button type="button" onclick="verificarStock()">Confirmar</button>
                 <button type="button" onclick="realizarPago()">Añadir</button>
             </form>
-            <p class="Cantidad_unidades">Precio unitario: $<span id="precioUnitario"></span></p>
-            <p class="Cantidad_unidades">Precio de la línea: $<span id="precioLinea"></span></p>
+            <p class="importe_producto">El producto es: <span id="producto_precio"></span></p>
+            <p class="precio_total">El precio total es: <span id="producto_precio_total"></span></p>
         </div>
         <form>
             <input type="button" value="pagar">
         </form>
     </div>
-</body>
-<footer>
+    <footer>
 
-</footer>
+    </footer>
+</body>
+
 <script>
     let lista_productos = JSON.parse(localStorage.getItem('lista_productos')) || [];
     $(document).ready(function () {
@@ -111,39 +112,25 @@
                 return;
     }
 
-    function buscarProducto() {
-        var nombre_producto = document.getElementById("bname").value.toLowerCase();
-        for (var producto of lista_productos) {
-            if (producto.codigo.toLowerCase() === nombre_producto || producto.descripcion.toLowerCase() === nombre_producto) {
-                return producto;
-            }
-        }
-        return null; // Retorna null si no se encuentra el producto
-    }
-
     function verificarStock() {
         const codigoProducto = document.getElementById("bname").value.toLowerCase();
-        const cantidad = document.getElementById("buscStock").value;
+        const cantidad = document.getElementById("cantidad").value;
 
         // Validar que la cantidad sea un número entero positivo
         if (!/^[1-9]\d*$/.test(cantidad)) {
             alert("La cantidad debe ser un número entero positivo");
             return;
         }
-
         // Buscar el producto seleccionado
         const producto = buscarProducto();
-
         // Verificar si se encontró el producto y hay suficiente stock
         if (producto && producto.stock >= cantidad) {
             // Mostrar precio unitario
             const precioUnitario = producto.importe;
-            document.getElementById("precioUnitario").textContent = precioUnitario.toFixed(2);
-
+            document.getElementById("producto_precio").textContent = precioUnitario;
             // Calcular precio de línea y mostrarlo
             const precioLinea = precioUnitario * cantidad;
-            document.getElementById("precioLinea").textContent = precioLinea.toFixed(2);
-
+            document.getElementById("producto_precio_total").textContent = precioLinea;
             // Habilitar el botón de "Añadir"
             document.getElementById("añadirBoton").disabled = false;
         } else {
